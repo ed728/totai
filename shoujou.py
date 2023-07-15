@@ -1,6 +1,7 @@
 import fpdf
 import sys
 import csv
+import os
 
 START_Y = 78
 START_X = 30
@@ -39,7 +40,7 @@ pdf.output('test.pdf','F')
 
 def getData(fname):
     res = list()
-    with open(fname) as cf:
+    with open(fname,mode="r",encoding="utf-8-sig") as cf:
         cfr = csv.DictReader(cf)
         for row in cfr:
             res.append(row)
@@ -60,14 +61,14 @@ def getNameFont(name):
     return new_font
 
 
-def generatePDFs(data):
+def generatePDFs(data,pfn):
     pdf = fpdf.FPDF('P','mm','A4')
     pdf.add_font("ack",'','ackaisyo.ttf',uni=True)
     lData = len(data)
     for i in range(0,lData):
         pdf.add_page()
         pdf.set_font('ack','',1)
-        pdf.image('bg.jpg',x=0,y=0,w=210)
+        #pdf.image('bg.jpg',x=0,y=0,w=210)
         pdf.cell(0,h=START_Y)
         pdf.ln()
 
@@ -116,10 +117,12 @@ def generatePDFs(data):
             pdf.cell(150,2*CELL_HEIGHT_NAME,data_aff1,align='C')
 
 
-    pdf.output('test.pdf','F')
+    pdf.output(pfn,'F')
 
 if __name__ == "__main__":
     print("Starting")
     csvFileName = sys.argv[1]
     data = getData(csvFileName)
-    generatePDFs(data)
+    fn,fe = os.path.splitext(csvFileName)
+    pdfFileName = fn + ".pdf"
+    generatePDFs(data,pdfFileName)
